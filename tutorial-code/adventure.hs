@@ -1,6 +1,7 @@
 
 module Main (game) where
 
+import ParseAdventure
 import System.Exit (exitSuccess)
 
 class Entity a where 
@@ -31,7 +32,8 @@ game = do
           repl --start repl
 
 repl = do cmd <-getLine 
-          evalCommand cmd
+          expr <- parseExpr cmd
+          putStrLn expr
           repl
 
 evalCommand "help" = do putStrLn $ spacer ++ helpString ++ spacer
@@ -39,6 +41,11 @@ evalCommand "look" = do putStrLn ((name room0) ++ ": " ++ (describe room0))
 evalCommand "pocket" = do putStrLn $ spacer ++ "In your coat pocket:  " ++ (foldl (\acc item -> acc ++ (name item) ++ ",") "" pocket) ++ spacer
 evalCommand "quit" = do exitSuccess
 evalCommand "walk to " ++ x = do putStrLn "walking!"
+
+
+
+
+
 
 
 helpString = "Actions: \n walk to __ \n look \n open __ \n put __ in __ \n pocket \n help \n quit"

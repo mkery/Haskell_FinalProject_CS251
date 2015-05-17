@@ -1,6 +1,7 @@
 
 module Main where
 
+import AdventureParser
 import System.Exit (exitSuccess)
 
 class Entity a where 
@@ -31,16 +32,20 @@ main = do
           repl --start repl
 
 repl = do cmd <-getLine 
-          evalCommand cmd
+          evalCommand $ parseExpr cmd
           repl
 
-evalCommand "help" = do putStrLn $ spacer ++ helpString ++ spacer
-evalCommand "look" = do putStrLn ((name room0) ++ ": " ++ (describe room0))
-evalCommand "pocket" = do putStrLn $ spacer ++ "In your coat pocket:  " ++ (foldl (\acc item -> acc ++ (name item) ++ ",") "" pocket) ++ spacer
-evalCommand "quit" = do exitSuccess
+
+evalCommand ("help",[Nothing]) = do putStrLn $ spacer ++ helpString ++ spacer
+evalCommand ("help", (Just x):xs) = do putStrLn $ x ++ "<help>. \n" ++ spacer ++ helpString ++ spacer
+
+evalCommand ("look", []) = do putStrLn ((name room0) ++ ": " ++ (describe room0))
+evalCommand ("pocket", []) = do putStrLn $ spacer ++ "In your coat pocket:  " ++ (foldl (\acc item -> acc ++ (name item) ++ ",") "" pocket) ++ spacer
+evalCommand ("quit", []) = do exitSuccess
 
 
 helpString = "Actions: \n walk to __ \n look \n open __ \n put __ in __ \n pocket \n help \n quit"
+tooManyWarning = "Sorry, didn't understand any of that past "
 spacer = "\nxxxxxxxxxxxxxxxxxxxxxxxxxxx \n"
 
 pocket = [Pickup {d_name = "onecard"}, Pickup {d_name = "room keys"}]
