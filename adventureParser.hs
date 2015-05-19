@@ -1,4 +1,9 @@
---following along https://wiki.haskell.org/Parsing_a_simple_imperative_language
+{- |
+Module : adventureParser.hs
+Description : Tiny parser for adventure game commands and the phrases (args) the user can type with them.
+
+CS251 Final Project - MaryBethKery 5/2015
+-}
 
 module AdventureParser where
 
@@ -16,7 +21,7 @@ lexer :: Token.TokenParser ()
 lexer = Token.makeTokenParser languageDef
   where languageDef = emptyDef {
   			  Token.reservedNames   = [ "look", "open", "walk to", "pocket", "put"]
-            , Token.reservedOpNames = ["in"]
+            , Token.reservedOpNames = ["in", "at"]
             }
 
 reserved :: String -> Parser ()
@@ -37,11 +42,15 @@ pr_walk_to = do
   x <- optionMaybe $ many1 anyChar
   return ("walk_to", [x])
 
+-- pr_look parses both "look" and "look at __" commands
 pr_look :: Parser (String, [Maybe String])
 pr_look = do
 	reserved "look"
+	at <- optionMaybe $ reservedOp "at"
 	x <- optionMaybe $ many1 anyChar
-	return ("look", [x])
+	case at of
+		Nothing -> return ("look", [x])
+		Just a -> return ("look_at", [x])
 
 pr_help :: Parser (String, [Maybe String])
 pr_help = do
@@ -82,7 +91,7 @@ allOf p = do
 parseExpr :: String -> (String, [Maybe String])
 parseExpr t = 
   case parse (allOf expr) "" t of
-    Left err -> error (show err)
+    Left err -> ("",[])
     Right ast -> ast
 
 

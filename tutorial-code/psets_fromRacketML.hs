@@ -34,8 +34,8 @@ rev xs =
 	in  revh xs []
 		
 -- ALT with foldl
-rev_alt :: [a] -> [a]
-rev_alt xs = foldl (\acc x -> x:acc) [] xs 
+rev_fd :: [a] -> [a]
+rev_fd xs = foldl (\acc x -> x:acc) [] xs 
 
 -- Lists.1.c Write a function deep-rev that takes any argument x and deeply reverses it
 
@@ -75,3 +75,12 @@ unzip_t xs =
 		unziph ((a,b):xs') (as,bs) =  unziph xs' (a:as, b:bs)
 		unziph [] fin = fin
 	in unziph xs ([],[])
+
+-- comments with dashes
+zip_r :: [a] -> [b] -> [(a,b)]
+zip_r [] ys = []
+zip_r (x:xs') (y:ys')  = (x,y) : (zip_r xs' ys')
+
+cats = 1 : cats
+
+ones = [1..]
